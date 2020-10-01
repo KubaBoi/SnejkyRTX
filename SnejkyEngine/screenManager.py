@@ -1,4 +1,6 @@
 import pygame
+from pygame import surfarray
+from pygame.locals import*
 import numpy as np
 import math
 
