@@ -17,7 +17,7 @@ class ThreadManager:
 
         #prida se posledni vlakno
         x = self.createThread(self.createThread, 
-                        self.countOfPixels - (oneThreadPixels * (self.threadCount-1))
+                        countOfPixels - (oneThreadPixels * (self.threadCount-1)))
         threads.append(x)
         x.start()
 
