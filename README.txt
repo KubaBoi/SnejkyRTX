@@ -3,11 +3,12 @@ Classes:
         init:
             width - sirka Screen
             height - vyska Screen
+            Screen (pygame)
 
         obsahuje:
             Camera
             ObjectManager
-            Screen
+            ScreenManager
             LightManager
 
         metody:
@@ -31,9 +32,8 @@ Classes:
                     - Object -> ObjectManager
                     - Light -> LightManager
 
-            setCamera(Vector location, Vector direction)
+            setCamera(Vector position, Vector direction)
                 nastavi Camera
-                pokud jsou location nebo direction None - nezmeni se
 
     ObjectManager
      - pracuje s Objecty sceny
@@ -73,6 +73,76 @@ Classes:
             removeLight(Light)
                 odeber Light z lights[]  
 
-    
+    ScreenManager
+     - Vykresluje obrazovku
+     - urcuje jaka data zpracuje jake vlakno
 
-        
+        init:
+            Engine
+            Screen (pygame)
+            width - sirka Screen
+            height - vyska Screen
+
+        obsahuje:
+            ThreadManager
+            Screen
+            Engine
+            pixelScreen[] - dvojrozmerne pole o velikosti width x height
+            width
+            height
+
+        metody:
+            updateScreen()
+                - zavola ThreadManager.update()
+                surfarray.blit_array(Screen, pixelScreen[])
+                pygame.display.flip()
+
+            drawScreen(int threadIndex, int numberOfPixels)
+                - RTX pro cast obrazovky - vystreli paprsky do numberOfPixels pixelu
+                - data uklada do pixelScreen[]
+
+    Camera
+     - nic nedela, jenom uchovava data o svoji poloze a smeru pohledu
+
+        init:
+            Position - Vector
+            Direction - Vector
+
+        obsahuje:
+            Position
+            Direction
+
+        metody:
+            setCamera(Vector position, Vector direction)
+                pokud jsou location nebo direction None - nezmeni se
+
+    ThreadManager
+     - rozdeluje vykreslovani do vlaken
+     - dynamicky urcuje kolik vlaken je potreba podle predchozich prubehu
+
+        init:
+            ScreenManager - parent
+
+        obsahuje:
+            ScreenManager
+            time
+            threadCount
+
+        metody:
+            update(int countOfPixels)
+                vytvori se nova promenna actTime = time.time()
+
+                - for cyklem se program rozdeli do threadCount vlaken a 
+                pro kazde vlakno se zavola (i = <1, threadCount>):
+                    ScreenManager.draw(i, countOfPixels/threadCount - zaokrouhleno dolu)
+
+                - pri vytvareni posledniho vlaken:
+                    ScreenManager.draw(i, countOfPixels - countOfPixels/threadCount - zaokrouhleno dolu * i-1)
+                    aby se projely i zbyvajici pixely
+
+                - pocka az jsou vsechna vlakna hotova
+                - actTime = time.time() - actTime
+
+                #pro zacatek bude konstatni pocet vlaken (treba 4)
+                pokud je time != 0:
+                    pokud je rozdil actTime a time vetsi jak nejaka hodnota
