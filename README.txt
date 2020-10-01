@@ -1,26 +1,23 @@
 Classes:
     Engine 
         init:
+            Screen (pygame)
             width - sirka Screen
             height - vyska Screen
-            Screen (pygame)
+            Camera
 
         obsahuje:
             Camera
             ObjectManager
             ScreenManager
             LightManager
+            Screen (pygame)
 
         metody:
             update()
                 updatuje celou scenu
                 zavola Camera.update()
                 zavola ObjectManager.update()
-                zavola LightManager.update()
-
-            draw()
-                vykresli celou scenu
-                zavola DrawManager.draw()
 
             addComponent(Component)
                 prida Component do
@@ -33,10 +30,10 @@ Classes:
                     - Light -> LightManager
 
             setCamera(Vector position, Vector direction)
-                nastavi Camera
+                zavola Camera.setCamera(position, direction)
 
     ObjectManager
-     - pracuje s Objecty sceny
+     - pracuje s Objects sceny
         init:
             Engine
 
@@ -47,7 +44,7 @@ Classes:
         metody:
             updateObjects()
                 zavola Object.update() pro cely objects[]
-
+                seradi objects[] podle vzdalenosti od Engine.Camera
             addObject(Object)
                 prida Object do objects[]
 
@@ -64,9 +61,6 @@ Classes:
             Engine
 
         metody:
-            updateLights()
-                zavola Light.update() pro cely lights[]
-
             addLight(Light)
                 prida Light do lights[]
 
@@ -75,21 +69,17 @@ Classes:
 
     ScreenManager
      - Vykresluje obrazovku
-     - urcuje jaka data zpracuje jake vlakno
 
         init:
             Engine
-            Screen (pygame)
-            width - sirka Screen
-            height - vyska Screen
 
         obsahuje:
             ThreadManager
-            Screen
+            Screen -> Engine.screen
             Engine
             pixelScreen[] - dvojrozmerne pole o velikosti width x height
-            width
-            height
+            width -> Engine.width
+            height -> Engine.height
 
         metody:
             updateScreen()
@@ -102,8 +92,6 @@ Classes:
                 - data uklada do pixelScreen[]
 
     Camera
-     - nic nedela, jenom uchovava data o svoji poloze a smeru pohledu
-
         init:
             Position - Vector
             Direction - Vector
@@ -113,6 +101,9 @@ Classes:
             Direction
 
         metody:
+            update()
+                zachytava pohyb mysi a upravuje Direction
+
             setCamera(Vector position, Vector direction)
                 pokud jsou location nebo direction None - nezmeni se
 
@@ -126,7 +117,7 @@ Classes:
         obsahuje:
             ScreenManager
             time
-            threadCount
+            threadCount = 4
 
         metody:
             update(int countOfPixels)
@@ -137,12 +128,11 @@ Classes:
                     ScreenManager.draw(i, countOfPixels/threadCount - zaokrouhleno dolu)
 
                 - pri vytvareni posledniho vlaken:
-                    ScreenManager.draw(i, countOfPixels - countOfPixels/threadCount - zaokrouhleno dolu * i-1)
+                    ScreenManager.draw(i, countOfPixels - (countOfPixels/threadCount - zaokrouhleno dolu) * i-1)
                     aby se projely i zbyvajici pixely
 
                 - pocka az jsou vsechna vlakna hotova
                 - actTime = time.time() - actTime
 
-                #pro zacatek bude konstatni pocet vlaken (treba 4)
                 pokud je time != 0:
-                    pokud je rozdil actTime a time vetsi jak nejaka hodnota
+                    pokud je actTime mensi nez time -> threadCount++
