@@ -1,4 +1,4 @@
-class lightManager:
+class LightManager:
     def __init__(self, engine):
         self.lights = []
         self.engine = engine

@@ -75,8 +75,8 @@ Classes:
 
         obsahuje:
             ThreadManager
-            Screen -> Engine.screen
             Engine
+	    Screen -> Engine.Screen
             pixelScreen[] - dvojrozmerne pole o velikosti width x height
             width -> Engine.width
             height -> Engine.height
@@ -90,6 +90,7 @@ Classes:
             drawScreen(int threadIndex, int numberOfPixels)
                 - RTX pro cast obrazovky - vystreli paprsky do numberOfPixels pixelu
                 - data uklada do pixelScreen[]
+		
 
     Camera
         init:
@@ -136,3 +137,15 @@ Classes:
 
                 pokud je time != 0:
                     pokud je actTime mensi nez time -> threadCount++
+
+    ThreadVariables
+     - slouzi k uchovavani promennych pro jedno vlakno
+    
+        init:
+            index - index vlakna
+            numberOfPixels - pocet pixelu
+
+        obsahuje:
+            index
+            numberOfPixels
+            i - index pro cyklus v drawScreen()

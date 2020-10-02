@@ -1,4 +1,4 @@
-class objectManager:
+class ObjectManager:
     def __init__(self, engine):
         self.objects = []
         self.engine = engine

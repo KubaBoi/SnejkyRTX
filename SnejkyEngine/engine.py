@@ -1,8 +1,19 @@
 import pygame
 
-from SnejkyEngine.objectManager import ObjectManager
-from SnejkyEngine.lightManager import LightManager
-from SnejkyEngine.screenManager import ScreenManager
+try:
+    from SnejkyEngine.objectManager import ObjectManager
+    from SnejkyEngine.lightManager import LightManager
+    from SnejkyEngine.screenManager import ScreenManager
+except: #testing
+    import sys
+    import os
+
+    PACKAGE_PARENT = '..'
+    SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
+    sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
+    from objectManager import ObjectManager
+    from lightManager import LightManager
+    from screenManager import ScreenManager
 
 class Engine:
     def __init__(self, screen, width, height, camera):
