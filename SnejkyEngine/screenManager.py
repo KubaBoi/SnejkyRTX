@@ -32,16 +32,19 @@ class ScreenManager:
     def updateScreen(self):
         self.threadManager.update(self.width * self.height)
 
-        surfarray.blit_array(self.screen, self.pixelScreen)
-        pygame.display.flip()
+        #print(self.pixelScreen)
+        #surfarray.blit_array(self.screen, self.pixelScreen)
+        #pygame.display.flip()
 
-    def drawScreen(self, index, pixels):
+    def drawScreen(self, index, pixels, finalScreen):
         threadVars = ThreadVariables(index, pixels)
         startingIndex = (threadVars.index - 1) * threadVars.numberOfPixels
-        a = 0
-        for i in range(0, threadVars.numberOfPixels):
+        
+        for i in range(0, threadVars.numberOfPixels):       
+            #print(str(startingIndex % self.width) + " - " + str(math.floor(startingIndex / self.width)))
+            #pixelScreen[(startingIndex % self.width, math.floor(startingIndex / self.width))] = (index,80,60)
+            finalScreen[(startingIndex % self.width, math.floor(startingIndex / self.width))] = (index, index, index)
+
             startingIndex += 1
-            for x in range(0, 50):
-                a += 1
 
         print("\n" + str(threadVars.index) + ": " + str(threadVars.numberOfPixels) + " - " + str(startingIndex) + "\n")

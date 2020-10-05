@@ -1,5 +1,5 @@
 import math
-import threading
+import multiprocessing
 
 try:
     from SnejkyEngine.Threading.threadVariables import ThreadVariables
@@ -15,29 +15,33 @@ except: #testing
 class ThreadManager:
     def __init__(self, screenManager):
         self.screenManager = screenManager
-        self.threadCount = 3
+        self.threadCount = multiprocessing.cpu_count()-1
+
 
     def update(self, countOfPixels):
         oneThreadPixels = math.floor(countOfPixels/self.threadCount)
 
+        pic = []
+        finalScreen = multiprocessing.Array(self.screenManager.pixelScreen, 10)
+
         threads = []
-        for i in range(1, self.threadCount):
-            x = self.createThread(i, oneThreadPixels)
+        for i in range(0, self.threadCount):
+            if (i < self.threadCount):
+                x = self.createThread(i+1, oneThreadPixels, finalScreen)
+            else:
+                x = self.createThread(self.threadCount, 
+                        countOfPixels - (oneThreadPixels * (self.threadCount-1)), finalScreen)
             threads.append(x)
-            x.start()
 
-        #prida se posledni vlakno
-        x = self.createThread(self.threadCount, 
-                        countOfPixels - (oneThreadPixels * (self.threadCount-1)))
-        threads.append(x)
-        x.start()
+        for thread in threads:
+            thread.start()
 
-        for index, thread in enumerate(threads):
+        for thread in threads:
             thread.join()
 
-    def createThread(self, index, pixels):
-        #threadVars = ThreadVariables(index, pixels)
+        print(finalScreen)
 
-        return threading.Thread(
+    def createThread(self, index, pixels, queue):
+        return multiprocessing.Process(
                 target=self.screenManager.drawScreen,
-                args=(index, pixels))
+                args=(index, pixels, queue))
