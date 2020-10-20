@@ -1,22 +1,24 @@
-import multiprocessing
+import time
+from multiprocessing import Process, Manager, Value
 
-def worker(data, final_list):
-    for item in data:
-        final_list.append(item)
+def foo(data, name=''):
+    print(type(data), data.value, name)
+    data.value += 1
 
 if __name__ == "__main__":
-    manager = multiprocessing.Manager()
-    final_list = manager.list()
+    manager = Manager()
+    x = manager.Value('i', 0)
+    y = Value('i', 0)
 
-    input_list_one = ['one', 'two', 'three', 'four', 'five']
-    input_list_two = ['six', 'seven', 'eight', 'nine', 'ten']
+    for i in range(5):
+        Process(target=foo, args=(x, 'x')).start()
+        Process(target=foo, args=(y, 'y')).start()
 
-    process1 = multiprocessing.Process(target=worker, args=(input_list_one, final_list))
-    process2 = multiprocessing.Process(target=worker, args=(input_list_two, final_list))
+    print('Before waiting: ')
+    print('x = {0}'.format(x.value))
+    print('y = {0}'.format(y.value))
 
-    process1.start()
-    process2.start()
-    process1.join()
-    process2.join()
-
-    print(final_list)
+    time.sleep(5.0)
+    print('After waiting: ')
+    print('x = {0}'.format(x.value))
+    print('y = {0}'.format(y.value))

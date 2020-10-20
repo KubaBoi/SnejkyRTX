@@ -3,6 +3,8 @@ from pygame import surfarray
 from pygame.locals import*
 import numpy as np
 import math
+import ctypes as c
+import multiprocessing
 
 try:
     from SnejkyEngine.Threading.threadManager import ThreadManager
@@ -36,14 +38,13 @@ class ScreenManager:
         #surfarray.blit_array(self.screen, self.pixelScreen)
         #pygame.display.flip()
 
-    def drawScreen(self, index, pixels, finalScreen):
+    def drawScreen(self, lock, index, pixels, finalScreen):
         threadVars = ThreadVariables(index, pixels)
         startingIndex = (threadVars.index - 1) * threadVars.numberOfPixels
         
-        for i in range(0, threadVars.numberOfPixels):       
-            #print(str(startingIndex % self.width) + " - " + str(math.floor(startingIndex / self.width)))
-            #pixelScreen[(startingIndex % self.width, math.floor(startingIndex / self.width))] = (index,80,60)
-            finalScreen[(startingIndex % self.width, math.floor(startingIndex / self.width))] = (index, index, index)
+        for i in range(0, threadVars.numberOfPixels):  
+            with lock:  
+                finalScreen.value[(startingIndex % self.width, math.floor(startingIndex / self.width))] = (0,0,0)
 
             startingIndex += 1
 

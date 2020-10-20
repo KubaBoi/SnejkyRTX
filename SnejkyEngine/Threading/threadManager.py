@@ -21,15 +21,16 @@ class ThreadManager:
     def update(self, countOfPixels):
         oneThreadPixels = math.floor(countOfPixels/self.threadCount)
 
-        pic = []
-        finalScreen = multiprocessing.Array(self.screenManager.pixelScreen, 10)
+        manager = multiprocessing.Manager()
+        finalScreen = manager.Value("i", self.screenManager.pixelScreen)
+        lock = multiprocessing.Lock()
 
         threads = []
         for i in range(0, self.threadCount):
             if (i < self.threadCount):
-                x = self.createThread(i+1, oneThreadPixels, finalScreen)
+                x = self.createThread(lock, i+1, oneThreadPixels, finalScreen)
             else:
-                x = self.createThread(self.threadCount, 
+                x = self.createThread(lock, self.threadCount, 
                         countOfPixels - (oneThreadPixels * (self.threadCount-1)), finalScreen)
             threads.append(x)
 
@@ -39,9 +40,9 @@ class ThreadManager:
         for thread in threads:
             thread.join()
 
-        print(finalScreen)
+        print(finalScreen.value)
 
-    def createThread(self, index, pixels, queue):
+    def createThread(self, lock, index, pixels, queue):
         return multiprocessing.Process(
                 target=self.screenManager.drawScreen,
-                args=(index, pixels, queue))
+                args=(lock, index, pixels, queue,))
