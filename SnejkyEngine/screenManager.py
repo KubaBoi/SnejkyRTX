@@ -3,8 +3,10 @@ from pygame import surfarray
 from pygame.locals import*
 import numpy as np
 import math
-import ctypes as c
-import multiprocessing
+from multiprocessing import shared_memory, Process, Lock
+from multiprocessing import cpu_count, current_process
+
+from PIL import Image, ImageDraw
 
 try:
     from SnejkyEngine.Threading.threadManager import ThreadManager
@@ -28,24 +30,37 @@ class ScreenManager:
         self.width = engine.width
         self.height = engine.height
 
-        self.pixelScreen = np.zeros((self.width, self.height, 3), dtype=np.uint8)    
-        self.pixelScreen[0:self.width, 0:self.height] =  (255,255,255)
+        self.pixelScreen = np.ndarray((self.width, self.height, 3), dtype=np.int64)  #dtype=np.uint8
+        self.pixelScreen[0:self.width, 0:self.height] = (0,255,0)
 
     def updateScreen(self):
-        self.threadManager.update(self.width * self.height)
+        pixelScreen = self.threadManager.update(self.width * self.height)
+        #print(pixelScreen)
+        pixelScreen = np.array(pixelScreen).reshape(self.width, self.height, 3)
 
-        #print(self.pixelScreen)
-        #surfarray.blit_array(self.screen, self.pixelScreen)
+        self.saveFrame(pixelScreen)
+        #surfarray.blit_array(self.screen, pixelScreen)
         #pygame.display.flip()
 
-    def drawScreen(self, lock, index, pixels, finalScreen):
-        threadVars = ThreadVariables(index, pixels)
-        startingIndex = (threadVars.index - 1) * threadVars.numberOfPixels
-        
-        for i in range(0, threadVars.numberOfPixels):  
-            with lock:  
-                finalScreen.value[(startingIndex % self.width, math.floor(startingIndex / self.width))] = (0,0,0)
+    def drawScreen(self, index):
+        x = index % self.width
+        y = math.floor(index / self.width)
+        oldPixel = self.pixelScreen[(x, y)]
 
-            startingIndex += 1
+        if (oldPixel[0] == 0 and oldPixel[1] == 255 and oldPixel[2] == 0):
+            return (255, 0, 0)
 
-        print("\n" + str(threadVars.index) + ": " + str(threadVars.numberOfPixels) + " - " + str(startingIndex) + "\n")
+        return (0, 0, 0)
+
+    def saveFrame(self, pixelScreen):
+        print("Saving frame...")
+
+        img = Image.new("RGBA", (self.width, self.height), color=(159,188,255))
+        pix = img.load()
+
+        for y in range(self.height):
+            for x in range(self.width):
+                pix[x, y] = (pixelScreen[x, y][0], pixelScreen[x, y][1], pixelScreen[x, y][2]) 
+
+        img.save("frame.png")
+        print("Frame has been saved.")

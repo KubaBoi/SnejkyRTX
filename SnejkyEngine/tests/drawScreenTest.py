@@ -1,32 +1,35 @@
 """
 testuje for cyklus pro vykresleni a rozdeleni programu do vlaken
 """
-if __name__ == "__main__":
-    import pygame
-    import logging
-    import time
-    import sys
-    import os
-    import multiprocessing
-    from traceback import format_exc
 
-    PACKAGE_PARENT = '..'
-    SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
-    sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
+import pygame
+import logging
+import time
+import sys
+import os
+import multiprocessing
+from traceback import format_exc
 
-    from engine import Engine
-    from screenManager import ScreenManager
+PACKAGE_PARENT = '..'
+SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
+sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
-    class DrawScreenTest:
+from engine import Engine
+from screenManager import ScreenManager
+
+class DrawScreenTest:
         def __init__(self):
-            width = 10
-            height = 10
+            width = 1920
+            height = 1080
+
+            screen = None#pygame.display.set_mode((width, height))
             #screen = pygame.display.set_mode((width, height))
-            self.ScreenManager = ScreenManager(Engine(None, width, height, None))
+            self.ScreenManager = ScreenManager(Engine(screen, width, height, None))
 
         def test(self):
             self.ScreenManager.updateScreen()
 
+if __name__ == "__main__":
     format = "%(asctime)s: %(message)s"
     logging.basicConfig(format=format, level=logging.INFO,
                     datefmt="%H:%M:%S")

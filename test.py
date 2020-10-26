@@ -1,24 +1,36 @@
+from multiprocessing import Pool, TimeoutError
 import time
-from multiprocessing import Process, Manager, Value
+import os
 
-def foo(data, name=''):
-    print(type(data), data.value, name)
-    data.value += 1
+arr = []
+for i in range(50):
+    arr.append(-5)
 
-if __name__ == "__main__":
-    manager = Manager()
-    x = manager.Value('i', 0)
-    y = Value('i', 0)
+def f(x):
+    global arr
+    return x + arr[x]
 
-    for i in range(5):
-        Process(target=foo, args=(x, 'x')).start()
-        Process(target=foo, args=(y, 'y')).start()
+if __name__ == '__main__':
+    t = time.time()
 
-    print('Before waiting: ')
-    print('x = {0}'.format(x.value))
-    print('y = {0}'.format(y.value))
+    # start 4 worker processes
+    with Pool(processes=4) as pool:
+        print(pool.map(f, range(50)))
 
-    time.sleep(5.0)
-    print('After waiting: ')
-    print('x = {0}'.format(x.value))
-    print('y = {0}'.format(y.value))
+        res = pool.apply_async(os.getpid, ())           
+
+        # launching multiple evaluations asynchronously *may* use more processes
+        #multiple_results = [pool.apply_async(os.getpid, ()) for i in range(4)]
+
+        # make a single worker sleep for 10 secs
+        res = pool.apply_async(time.sleep, (10,))
+        try:
+            print(res.get(timeout=1))
+        except TimeoutError:
+            print("We lacked patience and got a multiprocessing.TimeoutError")
+
+        print("For the moment, the pool remains available for more work")
+
+    # exiting the 'with'-block has stopped the pool
+    print("Now the pool is closed and no longer available")
+    print("time: " + str(time.time() - t))
