@@ -55,7 +55,7 @@ class ScreenManager:
     def saveFrame(self, pixelScreen):
         print("Saving frame...")
 
-        img = Image.new("RGBA", (self.width, self.height), color=(159,188,255))
+        img = Image.new("RGBA", (self.width, self.height), color=(0, 0, 0))
         pix = img.load()
 
         for y in range(self.height):
