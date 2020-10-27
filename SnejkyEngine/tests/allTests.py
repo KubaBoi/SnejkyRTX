@@ -53,7 +53,7 @@ class AllTests:
 
 if __name__ == "__main__":
     tests1 = []
-    tests1.append(DrawScreenTest())
+    #tests1.append(DrawScreenTest())
     tests1.append(VectorTest())
 
     allTests1 = AllTests(tests1)

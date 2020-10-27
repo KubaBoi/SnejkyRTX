@@ -28,4 +28,11 @@ class VectorTest(Test):
             "\n       Actual: " + str(result) + 
             "\n       Expected: " + str(math.sqrt(77)))
 
+        result = vector.distance(Vector(1, 2, 3))
+        if (result != math.sqrt(29)):
+            ok = False
+            Test.logError(self, "       distance() test error:" +
+            "\n       Actual: " + str(result) + 
+            "\n       Expected: " + str(math.sqrt(77)))
+
         return ok
