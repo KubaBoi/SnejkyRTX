@@ -3,12 +3,11 @@ class ObjectManager:
         self.objects = []
         self.engine = engine
 
-    def updateObjects(self):
+    def update(self):
         for obj in self.objects:
             obj.update()
 
     def addObject(self, obj):
-        obj.setEngine(self.engine)
         self.objects.append(obj)
 
     def removeObject(self, obj):

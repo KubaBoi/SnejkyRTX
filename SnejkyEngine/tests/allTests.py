@@ -32,12 +32,12 @@ class AllTests:
             if (test.doTest()):
                 logging.info(self.hr)
                 logging.info("Test done successfully")
-                result.append(self.color.okgreen("OK - test for " + str(test.name) + " done successfully"))
+                result.append(self.color.okgreen("OK - test for ") + self.color.warning(str(test.name)) + self.color.okgreen(" done successfully"))
                 ok += 1
             else:
                 logging.info(self.hr)
                 logging.info("Test failed")
-                result.append(self.color.fail(":( - test for " + str(test.name) + " failed"))
+                result.append(self.color.fail(":( - test for ") + self.color.warning(str(test.name)) + self.color.fail(" failed"))
 
             logging.info(self.hr)
             logging.info("Time: " + str(time.time() - t))
@@ -52,9 +52,9 @@ class AllTests:
         logging.info("In time " + str(time.time() - tm) + " s")
 
 if __name__ == "__main__":
-    tests1 = []
-    #tests1.append(DrawScreenTest())
-    tests1.append(VectorTest())
+    allTestsList = []
+    allTestsList.append(DrawScreenTest())
+    allTestsList.append(VectorTest())
 
-    allTests1 = AllTests(tests1)
+    allTests1 = AllTests(allTestsList)
     allTests1.run()

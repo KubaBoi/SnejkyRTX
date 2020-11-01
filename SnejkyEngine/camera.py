@@ -5,3 +5,6 @@ class Camera:
     def setCamera(self, position, direction):
         self.position = position
         self.direction = direction
+
+    def update(self):
+        pass

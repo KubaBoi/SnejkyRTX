@@ -5,45 +5,49 @@ from pygame.locals import*
 import time
 
 from SnejkyEngine.engine import Engine
-from SnejkyEngine.screen import Screen
+from SnejkyEngine.camera import Camera
+from SnejkyEngine.vector import Vector
+from SnejkyEngine.ball import Ball
 
-pygame.init()
+if __name__ == "__main__":
 
-#full screen
-#screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+    #pygame.init()
 
-width = 1280
-height = 720
-screen = pygame.display.set_mode((width, height))
+    #full screen
+    #screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
-color = (255, 255, 255)
-screen.fill((color))
-running = True
+    width = 800
+    height = 800
+    #screen = pygame.display.set_mode((width, height))
 
-clock = pygame.time.Clock()
+    color = (255, 255, 255)
+    #screen.fill((color))
+    running = True
 
-engine = Engine()
+    #clock = pygame.time.Clock()
 
-while running:
-    tm = time.time()
-    
-    try:
-        engine.Update()
-        engine.Draw()
-    except Exception as e:
-        print(repr(e))
-        print(format_exc())
-        running = False
+    camera = Camera(Vector(0, 0, 0), Vector(0, 0, -1))
 
-    sc.createScreen(screen)
-    #surfarray.blit_array(screen, sc.drawScreen())
-    pygame.display.flip()
-    
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+    engine = Engine(None, width, height, camera)
+
+    koule = Ball(engine, 20, (0, 0, -100))
+    engine.addComponent(koule)
+
+    while running:
+        tm = time.time()
+
+        try:
+            engine.update()
+        except Exception as e:
+            print(repr(e))
+            print(format_exc())
             running = False
+        
+        """for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False"""
 
-    l = time.time()-tm
-    #print(l)
+        l = time.time()-tm
+        print(l)
 
-pygame.quit()
+    #pygame.quit()

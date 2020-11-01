@@ -5,13 +5,18 @@ import numpy as np
 import math
 from multiprocessing import shared_memory, Process, Lock
 from multiprocessing import cpu_count, current_process
+from traceback import format_exc
 
 from PIL import Image, ImageDraw
 
 try:
     from SnejkyEngine.Threading.threadManager import ThreadManager
     from SnejkyEngine.Threading.threadVariables import ThreadVariables
-except: #testing
+    from SnejkyEngine.vector import Vector
+    from SnejkyEngine.ray import Ray
+except Exception as e: #testing
+    print(repr(e))
+    print(format_exc())
     import sys
     import os
 
@@ -20,6 +25,8 @@ except: #testing
     sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
     from Threading.threadManager import ThreadManager
     from Threading.threadVariables import ThreadVariables
+    from vector import Vector
+    from ray import Ray
 
 class ScreenManager:
     def __init__(self, engine):
@@ -35,12 +42,10 @@ class ScreenManager:
 
     def updateScreen(self):
         pixelScreen = self.threadManager.update(self.width * self.height)
-        #print(pixelScreen)
+
         pixelScreen = np.array(pixelScreen).reshape(self.width, self.height, 3)
 
         self.saveFrame(pixelScreen)
-        #surfarray.blit_array(self.screen, pixelScreen)
-        #pygame.display.flip()
 
     def drawScreen(self, index):
         x = index % self.width
@@ -48,7 +53,9 @@ class ScreenManager:
         oldPixel = self.pixelScreen[(x, y)]
 
         if (oldPixel[0] == 0 and oldPixel[1] == 255 and oldPixel[2] == 0):
-            return (255, 0, 0)
+            ray = Ray(self.engine, (round(x - self.width / 2), round(y - self.height / 2), -100))
+            ray.foundPixel()
+            return ray.getColor()
 
         return (0, 0, 0)
 

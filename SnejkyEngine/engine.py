@@ -1,10 +1,13 @@
 import pygame
+from traceback import format_exc
 
 try:
     from SnejkyEngine.objectManager import ObjectManager
     from SnejkyEngine.lightManager import LightManager
     from SnejkyEngine.screenManager import ScreenManager
-except: #testing
+except Exception as e: #testing
+    print(repr(e))
+    print(format_exc())
     import sys
     import os
 
@@ -32,7 +35,7 @@ class Engine:
         self.screenManager.updateScreen()
 
     def addComponent(self, Component):
-        pass
+        self.objectManager.addObject(Component)
 
     def removeComponent(self, Component):
         pass
