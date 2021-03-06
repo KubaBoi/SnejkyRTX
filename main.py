@@ -27,22 +27,21 @@ if __name__ == "__main__":
 
     #clock = pygame.time.Clock()
 
-    camera = Camera(Vector(0, 0, 0), Vector(0, 0, 1))
+    camera = Camera(Vector(0, 0, 0), Vector(0, 0, -1))
 
     engine = Engine(None, width, height, camera)
 
     #cervena
-    koule = Ball(engine, 2, (0, 0, 50), (255, 20, 100))
+    koule = Ball(engine, 2, (0, 0, -50), (255, 20, 100))
     engine.addComponent(koule)
     #modra
     koule = Ball(engine, 2, (5, 2, -50), (0, 255, 255))
     engine.addComponent(koule)
     #zelena
-
     koule = Ball(engine, 2, (-10, 2, -45), (0, 255, 10))
     engine.addComponent(koule)
 
-    light = Light(engine, (10, 0, -50))
+    light = Light(engine, (10, 0, 0))
     engine.lightManager.addLight(light)
 
     while running:
