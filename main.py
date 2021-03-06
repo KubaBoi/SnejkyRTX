@@ -7,6 +7,7 @@ import time
 from SnejkyEngine.engine import Engine
 from SnejkyEngine.camera import Camera
 from SnejkyEngine.vector import Vector
+from SnejkyEngine.light import Light
 from SnejkyEngine.ball import Ball
 
 if __name__ == "__main__":
@@ -26,18 +27,30 @@ if __name__ == "__main__":
 
     #clock = pygame.time.Clock()
 
-    camera = Camera(Vector(0, 0, 0), Vector(0, 0, -1))
+    camera = Camera(Vector(0, 0, 0), Vector(0, 0, 1))
 
     engine = Engine(None, width, height, camera)
 
-    koule = Ball(engine, 20, (0, 0, -100))
+    #cervena
+    koule = Ball(engine, 2, (0, 0, 50), (255, 20, 100))
     engine.addComponent(koule)
+    #modra
+    koule = Ball(engine, 2, (5, 2, -50), (0, 255, 255))
+    engine.addComponent(koule)
+    #zelena
+
+    koule = Ball(engine, 2, (-10, 2, -45), (0, 255, 10))
+    engine.addComponent(koule)
+
+    light = Light(engine, (10, 0, -50))
+    engine.lightManager.addLight(light)
 
     while running:
         tm = time.time()
 
         try:
             engine.update()
+            running = False
         except Exception as e:
             print(repr(e))
             print(format_exc())

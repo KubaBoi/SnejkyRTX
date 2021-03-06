@@ -1,6 +1,6 @@
-from engine import Engine
-from objectManager import ObjectManager
-from object import Object
+from SnejkyEngine.engine import Engine
+from SnejkyEngine.objectManager import ObjectManager
+from SnejkyEngine.object import Object
 
 class Light(Object):
     def __init__(self, engine, position=(0,0,0)):

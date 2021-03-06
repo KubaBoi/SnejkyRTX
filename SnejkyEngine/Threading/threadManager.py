@@ -22,7 +22,8 @@ class ThreadManager:
 
 
     def update(self, countOfPixels):
+        print(countOfPixels)
         with Pool(processes=self.threadCount) as pool:
             pixelScreen = pool.map(self.screenManager.drawScreen, range(countOfPixels))
-
+            print(pixelScreen)
             return pixelScreen

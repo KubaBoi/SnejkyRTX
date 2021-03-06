@@ -41,9 +41,14 @@ class ScreenManager:
         self.pixelScreen[0:self.width, 0:self.height] = (0,255,0)
 
     def updateScreen(self):
-        pixelScreen = self.threadManager.update(self.width * self.height)
+        #pixelScreen = self.threadManager.update(self.width * self.height)
+        #pixelScreen = np.array(pixelScreen).reshape(self.height, self.width, 3)
 
-        pixelScreen = np.array(pixelScreen).reshape(self.width, self.height, 3)
+        pixelScreen = []
+        for i in range(self.width * self.height):
+            pixelScreen.append(self.drawScreen(i))
+
+        pixelScreen = self.reshape(pixelScreen)
 
         self.saveFrame(pixelScreen)
 
@@ -53,7 +58,10 @@ class ScreenManager:
         oldPixel = self.pixelScreen[(x, y)]
 
         if (oldPixel[0] == 0 and oldPixel[1] == 255 and oldPixel[2] == 0):
-            ray = Ray(self.engine, (round(x - self.width / 2), round(y - self.height / 2), -100))
+            ray = Ray(self.engine, 
+                Vector(round(x - self.width / 2), round(y - self.height / 2), -1000),
+                self.engine.camera.position)
+
             ray.foundPixel()
             return ray.getColor()
 
@@ -65,9 +73,20 @@ class ScreenManager:
         img = Image.new("RGBA", (self.width, self.height), color=(0, 0, 0))
         pix = img.load()
 
-        for y in range(self.height):
+        for y in range(1, self.height+1):
             for x in range(self.width):
-                pix[x, y] = (pixelScreen[x, y][0], pixelScreen[x, y][1], pixelScreen[x, y][2]) 
+                pix[x, y-1] = (pixelScreen[self.height-y][x][0],
+                            pixelScreen[self.height-y][x][1], 
+                            pixelScreen[self.height-y][x][2])
 
         img.save("frame.png")
         print("Frame has been saved.")
+
+    def reshape(self, pixelScreen):
+        pix = []
+        for y in range(self.height):
+            pix.append([])
+            for x in range(self.width):
+                pix[y].append(pixelScreen[y*self.width + x])
+
+        return pix

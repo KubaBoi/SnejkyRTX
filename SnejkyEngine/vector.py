@@ -66,9 +66,9 @@ class Vector:
                 self.z * vector.z)
 
     def angle(self, vector):
-        if (self.selfLength * vector.selfLength == 0):
+        if (self.selfLength() * vector.selfLength() == 0):
             return 0
         try:
             return (math.acos(self.scalar(vector) /
-                          (self.selfLength * vector.selfLength)))
+                          (self.selfLength() * vector.selfLength())))
         except: return 0
