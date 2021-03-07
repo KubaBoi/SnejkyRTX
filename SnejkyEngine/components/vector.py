@@ -11,7 +11,7 @@ class Vector:
         return math.sqrt(self.x*self.x + self.y*self.y + self.z*self.z)
 
     def distance(self, vector):
-        return math.sqrt(pow(abs(self.x - vector.x), 2) + pow(abs(self.y - vector.y), 2) + pow(abs(self.z - vector.z), 2))
+        return math.sqrt(pow(self.x - vector.x, 2) + pow(self.y - vector.y, 2) + pow(self.z - vector.z, 2))
 
     #bod - pricte k bodu vektor 
     def addVector(self, vector):
@@ -46,10 +46,11 @@ class Vector:
         else: return Vector(0, 0, 0)
 
     #bod - vytvori novy vektor k bodu
+    #self je zacatek vektoru
     def newVector(self, point):
-        return Vector(self.x - point.x,
-                      self.y - point.y,
-                      self.z - point.z)
+        return Vector(point.x - self.x,
+                      point.y - self.y,
+                      point.z - self.z)
 
     #vektor - zjisti jestli jsou vektory rovnobezne(muzou byt i opacne)
     def parallelVector(self, vector):
@@ -72,3 +73,9 @@ class Vector:
             return (math.acos(self.scalar(vector) /
                           (self.selfLength() * vector.selfLength())))
         except: return 0
+
+    def equals(self, vector):
+        d = 10000
+        return (int(self.x*d) == int(vector.x*d) and
+                int(self.y*d) == int(vector.y*d) and
+                int(self.z*d) == int(vector.z*d))

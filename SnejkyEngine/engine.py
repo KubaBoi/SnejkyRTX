@@ -1,4 +1,3 @@
-import pygame
 from traceback import format_exc
 
 try:

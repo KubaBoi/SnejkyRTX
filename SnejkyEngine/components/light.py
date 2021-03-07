@@ -1,9 +1,9 @@
-from engine import Engine
-from object import Object
-from objectManager import ObjectManager
-from vector import Vector
+from SnejkyEngine.engine import Engine
+from SnejkyEngine.objectManager import ObjectManager
+from SnejkyEngine.object import Object
+from SnejkyEngine.vector import Vector
 
-class PlaygonObjectObject(Object):
+class Light(Object):
     def __init__(self, engine, position=(0,0,0)):
         Object.__init__(self, engine, position)
         self.engine = engine

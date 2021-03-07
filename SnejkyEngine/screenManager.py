@@ -1,6 +1,3 @@
-import pygame
-from pygame import surfarray
-from pygame.locals import*
 import numpy as np
 import math
 from multiprocessing import shared_memory, Process, Lock
@@ -39,6 +36,8 @@ class ScreenManager:
 
         self.pixelScreen = np.ndarray((self.width, self.height, 3), dtype=np.int64)  #dtype=np.uint8
         self.pixelScreen[0:self.width, 0:self.height] = (0,255,0)
+        
+        self.frameCount = 0
 
     def updateScreen(self):
         #pixelScreen = self.threadManager.update(self.width * self.height)
@@ -79,8 +78,9 @@ class ScreenManager:
                             pixelScreen[self.height-y][x][1], 
                             pixelScreen[self.height-y][x][2])
 
-        img.save("frame.png")
-        print("Frame has been saved.")
+        img.save(f"Frames/frame{self.number()}.png")
+        print(f"Frame {self.number()} has been saved.")
+        self.frameCount += 1
 
     def reshape(self, pixelScreen):
         pix = []
@@ -90,3 +90,8 @@ class ScreenManager:
                 pix[y].append(pixelScreen[y*self.width + x])
 
         return pix
+
+    def number(self):
+        s = str(self.frameCount)
+        zeros = "0"*(9-len(s))
+        return zeros + s
