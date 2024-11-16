@@ -1,2 +1,1 @@
-make
-python main.py
+make && python main.py
